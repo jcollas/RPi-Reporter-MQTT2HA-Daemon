@@ -589,7 +589,7 @@ def getDeviceModel():
 def getLinuxRelease():
     global rpi_linux_release
     stdout, _, returncode = invoke_shell_cmd(
-        "/bin/cat /etc/apt/sources.list | /bin/egrep -v '#' | /usr/bin/awk '{ print $3 }' | /bin/sed -e 's/-/ /g' | /usr/bin/cut -f1 -d' ' | /bin/grep . | /usr/bin/sort -u")
+        "/bin/cat /etc/os-release | /bin/egrep 'VERSION_CODENAME' | /bin/sed -e 's/VERSION_CODENAME=//'")
     rpi_linux_release = 'N/A'
     if not returncode:
         rpi_linux_release = stdout.decode('utf-8').rstrip()
@@ -838,7 +838,7 @@ def getNetworkIFs():
         getNetworkIFsUsingIP(ip_cmd)
     else:
         stdout, _, returncode = invoke_shell_cmd(
-            '/sbin/ifconfig | /bin/egrep "Link|flags|inet |ether " | /bin/egrep -v -i "lo:|loopback|inet6|\:\:1|127\.0\.0\.1"')
+            '/sbin/ifconfig | /bin/egrep "Link|flags|inet |ether " | /bin/egrep -v -i "lo:|loopback|inet6|::1|127.0.0.1"')
         lines = []
         if not returncode:
             lines = stdout.decode('utf-8').split("\n")
